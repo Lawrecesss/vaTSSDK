@@ -1,0 +1,26 @@
+{
+  "name": "my-ts-sdk",
+  "version": "0.1.0",
+  "description": "A TypeScript SDK for [your service]",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "sdk",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.4"
+  }
+}
