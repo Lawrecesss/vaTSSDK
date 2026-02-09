@@ -1,28 +1,41 @@
 "use client"
-import { useState } from "react";
-import va from "../../sdk/src/api"
+import { useState, useEffect } from "react";
+import VideoAnalyzer from "../../sdk/src/api";
 import { ProcessResult } from "../../sdk/src/types";
 
 export default function VideoUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<string>('...');
   const [result, setResult] = useState<ProcessResult>();
+  const [client, setClient] = useState<VideoAnalyzer | null>(null);
 
-  const client = new va("https://videoanalysis-kcot.onrender.com");
+  // Initialize client once
+  useEffect(() => {
+    (async () => {
+      try {
+        const analyzer = await VideoAnalyzer.create("https://videoanalysis-kcot.onrender.com", undefined ,"nvidia/nemotron-nano-12b-v2-vl:free", "categorize the video content in a concise manner");
+        setClient(analyzer);
+      } catch (err) {
+        console.error("Failed to create VideoAnalyzer client", err);
+        setStatus("Client initialization failed");
+      }
+    })();
+  }, []);
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) setFile(e.target.files[0]);
   };
+
   const handleUpload = async () => {
-    if (!file) return;
+    if (!file || !client) return;
 
     try {
       setStatus('Uploading...');
       const { jobId } = await client.uploadVideo(file);
       setStatus('Waiting for result...');
-
-      setResult(await client.getResult(jobId));
-      console.log(result?.createdAt);
-      setStatus(`Processing completed`);
+      const res = await client.getResult(jobId);
+      setResult(res);
+      setStatus('Processing completed');
     } catch (err) {
       console.error(err);
       setStatus('Upload or processing failed');
@@ -96,7 +109,7 @@ export default function VideoUpload() {
               {/* Upload Button */}
               <button
                 onClick={handleUpload}
-                disabled={!file}
+                disabled={!file || ! client}
                 className="w-full px-6 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
               >
                 {status === 'Uploading...' ? 'Processing...' : 'Analyze Video'}
