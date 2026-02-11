@@ -1,11 +1,11 @@
 import axios, { AxiosInstance } from "axios";
-import { JobData, ProcessResult } from "./types";
+import { JobData, ProcessResult, VideoData } from "./types";
 
-export default class VideoAnalyzer {
+export class VideoAnalyzer {
   private _api: AxiosInstance;
   private _prompt: string;
   private _model: string;
-  private _modelId?: string; // backend model reference
+  private _modelId?: string;
 
   private constructor(baseUrl: string, apiKey?: string, model?: string, prompt?: string) {
     this._api = axios.create({
@@ -35,7 +35,7 @@ export default class VideoAnalyzer {
   }
 
   /** Upload a File object from browser */
-  async uploadVideo(file: File): Promise<JobData> {
+  async uploadVideo(file: File, metadata?: VideoData): Promise<JobData> {
     if (!this._modelId) throw new Error("Client not initialized");
 
     const formData = new FormData();
@@ -44,6 +44,9 @@ export default class VideoAnalyzer {
     console.log("Using prompt:", this._prompt);
     console.log("Uploading video with model ID:", this._modelId);
     formData.append("model_id", this._modelId);
+    if (metadata) {
+      formData.append("metadata", JSON.stringify(metadata));
+    }
 
     const response = await this._api.post("/upload", formData, {
     headers: {
@@ -51,6 +54,9 @@ export default class VideoAnalyzer {
     }});
     return {
       jobId: response.data.job_id,
+      modelId: response.data.model_id,
+      metadata: response.data.metadata,
+      video: response.data.video_filename,
       status: response.data.status
     };
   }
@@ -62,6 +68,7 @@ export default class VideoAnalyzer {
 
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        // console.log("Received data via WebSocket:", data);
         const res: ProcessResult = {
           jobId: jobId,
           id: data.id,

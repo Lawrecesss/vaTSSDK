@@ -1,8 +1,15 @@
 export interface JobData {
   jobId: string;
+  video?: string;
+  metadata?: VideoData;
+  modelId: string;
   status: string;
 }
 
+export interface VideoData {
+  caption: string;
+  tags: string[];
+}
 export interface ProcessResult {
   jobId: string;
   id: string;
