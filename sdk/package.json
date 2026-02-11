@@ -1,21 +1,18 @@
 {
-  "name": "my-ts-sdk",
-  "version": "0.1.0",
-  "description": "A TypeScript SDK for [your service]",
+  "name": "@lxwrxxce/vats-sdk",
+  "version": "1.0.0",
+  "description": "VATS Video Analysis SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build"
   },
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "sdk",
-    "typescript"
-  ],
-  "author": "Your Name",
+  "keywords": ["video", "analysis", "sdk"],
+  "author": "Lawrence",
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.0.0"

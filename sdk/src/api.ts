@@ -15,7 +15,7 @@ export default class VideoAnalyzer {
       }
     });
     this._model = model || "default-model";
-    this._prompt = prompt || "";
+    this._prompt = prompt || "Analyze the video and provide insights.";
   }
 
   /** Factory method to create and initialize the client */
@@ -40,9 +40,15 @@ export default class VideoAnalyzer {
 
     const formData = new FormData();
     formData.append("video", file);
+    console.log("Uploading video with model:", this._model);
+    console.log("Using prompt:", this._prompt);
+    console.log("Uploading video with model ID:", this._modelId);
     formData.append("model_id", this._modelId);
 
-    const response = await this._api.post("/upload", formData);
+    const response = await this._api.post("/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }});
     return {
       jobId: response.data.job_id,
       status: response.data.status

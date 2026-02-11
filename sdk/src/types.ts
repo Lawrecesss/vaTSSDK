@@ -1,8 +1,3 @@
-export interface Options {
-  userId: string;
-  limit?: number;
-}
-
 export interface JobData {
   jobId: string;
   status: string;
@@ -19,7 +14,4 @@ export interface ProcessResult {
   reasoning: string;
   refusal: string;
 }
-export interface MyData {
-  id: string;
-  value: string;
-}
+
