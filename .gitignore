@@ -5,3 +5,5 @@ dist/
 .DS_Store
 .next/
 .npmrc
+tester_for_vats/
+lxwrxxce-vats-sdk*

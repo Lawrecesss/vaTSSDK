@@ -68,7 +68,7 @@ export class VideoAnalyzer {
 
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        // console.log("Received data via WebSocket:", data);
+        console.log("Received data via WebSocket:", data);
         const res: ProcessResult = {
           jobId: jobId,
           id: data.id,
@@ -76,9 +76,9 @@ export class VideoAnalyzer {
           provider: data.provider,
           model: data.model,
           createdAt: data.created,
-          result: data.choices[0].message.content,
-          reasoning: data.choices[0].message.reasoning,
-          refusal: data.choices[0].message.refusal
+          result: data.choices ? data.choices[0].message.content : undefined,
+          reasoning: data.choices ? data.choices[0].message.reasoning : undefined,
+          refusal: data.choices ? data.choices[0].message.refusal : undefined
         };
         resolve(res);
         ws.close();
