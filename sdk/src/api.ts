@@ -40,9 +40,11 @@ export class VideoAnalyzer {
   }
 
   /** Get result via WebSocket */
-  getResult(jobId: string): Promise<ProcessResult> {
-    return new Promise((resolve, reject) => {
-      const ws = new WebSocket(`${this._api.defaults.baseURL?.replace(/^http/, "ws")}/result/${jobId}`);
+  async getResult(jobId: string, desiredResult: string): Promise<ProcessResult> {
+    return new Promise(async (resolve, reject) => {
+      const response = await this._api.post("/get_result", { jobId, desiredResult });
+      const resultReqId = response.data.job_id;
+      const ws = new WebSocket(`${this._api.defaults.baseURL?.replace(/^http/, "ws")}/result/${resultReqId}`);
 
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
