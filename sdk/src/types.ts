@@ -8,8 +8,9 @@ export interface JobData {
 
 export interface VideoData {
   model?: string;
-  caption: string;
-  tags: string[];
+  caption?: string;
+  tags?: string[];
+  prompt?: string;
 }
 export interface ProcessResult {
   jobId: string;
