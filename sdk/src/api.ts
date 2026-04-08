@@ -4,8 +4,9 @@ import { JobData, ProcessResult, VideoData } from "./types";
 export class VideoAnalyzer {
   private _api: AxiosInstance;
   private _model: string;
+  private _prompt: string;
 
-  private constructor(baseUrl: string, apiKey?: string, model?: string) {
+  private constructor(baseUrl: string, apiKey?: string, model?: string, prompt?: string) {
     this._api = axios.create({
       baseURL: baseUrl,
       headers: {
@@ -13,6 +14,11 @@ export class VideoAnalyzer {
       }
     });
     this._model = model || "nvidia/nemotron-nano-12b-v2-vl:free";
+    this._prompt = prompt || "";
+  }
+
+  static async create(baseUrl: string, apiKey?: string, model?: string, prompt?: string): Promise<VideoAnalyzer> {
+    return new VideoAnalyzer(baseUrl, apiKey, model, prompt);
   }
 
   /** Upload a File object from browser */
