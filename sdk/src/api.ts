@@ -45,13 +45,12 @@ export class VideoAnalyzer {
     };
   }
 
-  /** Get result via WebSocket */
-  async getResult(jobId: string, desiredResult: string): Promise<ProcessResult> {
-    return new Promise(async (resolve, reject) => {
-      const response = await this._api.post("/get_result", { jobId, desiredResult });
-      const resultReqId = response.data.job_id;
-      const ws = new WebSocket(`${this._api.defaults.baseURL?.replace(/^http/, "ws")}/result/${resultReqId}`);
+  private async _requestResult(jobId: string, endpoint: string): Promise<ProcessResult> {
+    const response = await this._api.post(`/get_result/${endpoint}`, { jobId });
+    const resultReqId = response.data.job_id;
+    const ws = new WebSocket(`${this._api.defaults.baseURL?.replace(/^http/, "ws")}/result/${resultReqId}`);
 
+    return new Promise((resolve, reject) => {
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         console.log("Received data via WebSocket:", data);
@@ -73,5 +72,25 @@ export class VideoAnalyzer {
       ws.onerror = (err) => reject(err);
       ws.onclose = () => console.log("WebSocket closed");
     });
+  }
+
+  async getCategories(jobId: string): Promise<ProcessResult> {
+    return this._requestResult(jobId, "categorize_only");
+  }
+
+  async getCategoriesWithExplanation(jobId: string): Promise<ProcessResult> {
+    return this._requestResult(jobId, "categorize_with_explanation");
+  }
+
+  async getInsights(jobId: string): Promise<ProcessResult> {
+    return this._requestResult(jobId, "get_insights");
+  }
+
+  async getTranscript(jobId: string): Promise<ProcessResult> {
+    return this._requestResult(jobId, "get_transcript");
+  }
+
+  async getAll(jobId: string): Promise<ProcessResult> {
+    return this._requestResult(jobId, "all");
   }
 }
